@@ -1,0 +1,246 @@
+<html>
+<head>
+  <title>Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, hsl(270, 100%, 69%), #feb47b, #6a11cb, #c05c90); 
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite; 
+    }
+
+    header {
+      background: hwb(68 11% 35%);
+      color: rgb(239, 235, 248);
+      padding: 1rem;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    form {
+      display:flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: white;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    input, button, label, textarea {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .gender {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .todo {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1rem;
+      background-color: white;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    li span {
+      flex-grow: 1;
+    }
+
+    li button {
+      margin-left: 0.5rem;
+      background: red;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .dob-placeholder {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: #aaa;
+      font-size: 1rem;
+      pointer-events: none;
+      transition: 0.3s ease;
+    }
+
+    input[type="date"]:valid + .dob-placeholder,
+    input[type="date"]:focus + .dob-placeholder {
+      display: none;
+    }
+
+    input[type="date"]:empty + .dob-placeholder {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Registration Form</h1>
+  </header>
+
+  <section class="container">
+    <h2>Contact Details</h2>
+    <form id="contactForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" placeholder="Your Name" required />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" placeholder="Your Email" required />
+
+      <label for="phone">Phone:</label>
+      <input type="tel" id="phone" placeholder="Your Phone Number" required />
+
+      <label for="dob">Date of Birth:</label>
+      <div style="position: relative;">
+        <input type="date" id="dob" required />
+        <label for="dob" class="dob-placeholder"></label> 
+      </div>
+
+      <div class="gender">
+        <label>Gender:</label>
+        <label><input type="radio" name="gender" value="Male" required /> Male</label>
+        <label><input type="radio" name="gender" value="Female" /> Female</label>
+        <label><input type="radio" name="gender" value="Other" /> Other</label>
+      </div>
+
+      <label for="skills">Skills:</label>
+      <textarea id="skills" placeholder="Enter your skills (comma separated)" rows="4" required></textarea>
+
+      <label for="languages">Languages Known:</label>
+      <div class="languages">
+        <label><input type="checkbox" name="languages" value="English" /> English</label>
+        <label><input type="checkbox" name="languages" value="Telugu" /> Telugu</label>
+        <label><input type="checkbox" name="languages" value="Hindi" /> Hindi</label>
+      </div>
+
+      <label for="fileUpload">Upload Resume:</label>
+      <input type="file" id="fileUpload" accept=".pdf,.doc,.docx,.jpg,.png" required />
+
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+
+  <section class="container todo">
+    <h2>To-Do List</h2>
+    <input type="text" id="taskInput" placeholder="Add a task..." />
+    <button onclick="addTask()">Add Task</button>
+    <ul id="taskList"></ul>
+  </section>
+
+  <script>
+    document.getElementById("contactForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const dob = document.getElementById("dob").value;
+      const file = document.getElementById("fileUpload").files[0];
+      const gender = document.querySelector('input[name="gender"]:checked');
+      const skills = document.getElementById("skills").value.trim();
+      const languages = Array.from(document.querySelectorAll('input[name="languages"]:checked')).map(checkbox => checkbox.value);
+
+      const nameRegex = /^[A-Za-z\s]+$/;
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+      const phoneRegex = /^\d{10}$/;
+
+      if (!nameRegex.test(name)) {
+        alert("Name should contain only letters and spaces.");
+        return;
+      }
+
+      if (!emailRegex.test(email)) {
+        alert("Email must be a valid Gmail address (e.g., user@gmail.com).");
+        return;
+      }
+
+      if (!phoneRegex.test(phone)) {
+        alert("Phone number must be exactly 10 digits.");
+        return;
+      }
+
+      if (!dob) {
+        alert("Please select your date of birth.");
+        return;
+      }
+
+      if (!gender) {
+        alert("Please select your gender.");
+        return;
+      }
+
+      if (!skills) {
+        alert("Please enter your skills.");
+        return;
+      }
+
+      if (languages.length === 0) {
+        alert("Please select at least one language.");
+        return;
+      }
+
+      if (!file) {
+        alert("Please upload a file.");
+        return;
+      }
+
+      alert("Form submitted successfully!");
+      this.reset();
+    });
+
+    function addTask() {
+      const taskInput = document.getElementById("taskInput");
+      const taskText = taskInput.value.trim();
+      if (taskText === "") return;
+
+      const li = document.createElement("li");
+      li.innerHTML = `<span>${taskText}</span><button onclick="removeTask(this)">Remove</button>`;
+      document.getElementById("taskList").appendChild(li);
+      taskInput.value = "";
+    }
+
+    function removeTask(button) {
+      button.parentElement.remove();
+    }
+  </script>
+</body>
+</html>
